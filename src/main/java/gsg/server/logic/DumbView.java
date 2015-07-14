@@ -1,4 +1,4 @@
-package gsg.server;
+package gsg.server.logic;
 
 import com.google.common.collect.Maps;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 /**
- * @author Ivan Panfilov, folremo@axmor.com
+ * @author zkejid@gmail.com
  *         Created: 13.07.15 23:01
  */
 public class DumbView extends TestbedTest {
