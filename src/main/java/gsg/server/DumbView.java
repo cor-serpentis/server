@@ -43,8 +43,7 @@ public class DumbView extends TestbedTest {
 	}
 
 	private void createSelf() {
-		self = UUID.randomUUID().toString();
-		connect(self);
+		self = connect();
 	}
 
 	@Override
@@ -52,8 +51,10 @@ public class DumbView extends TestbedTest {
 		return "Test World";
 	}
 
-	public void connect(String key) {
+	public String connect() {
+		final String key = UUID.randomUUID().toString();
 		queueOfConnectionsUp.add(key);
+		return key;
 	}
 
 	public void disconnect(String key) {
@@ -75,19 +76,19 @@ public class DumbView extends TestbedTest {
 	private void keyPressed(char argKeyChar, String key) {
 		switch (argKeyChar) {
 			case 'w':
-				up(key);
+				processMessage(key, "up");
 				break;
 
 			case 'a':
-				left(key);
+				processMessage(key, "left");
 				break;
 
 			case 's':
-				down(key);
+				processMessage(key, "down");
 				break;
 
 			case 'd':
-				right(key);
+				processMessage(key, "right");
 				break;
 		}
 	}
@@ -121,13 +122,44 @@ public class DumbView extends TestbedTest {
 		keyReleased(argKeyChar,  self);
 	}
 
+	public void processMessage(String key, String message) {
+		if (bodies.containsKey(key)) {
+			if ("left".equals(message)) {
+				left(key);
+			}
+			else if ("right".equals(message)) {
+				right(key);
+			}
+			else if ("up".equals(message)) {
+				up(key);
+			}
+			else if ("down".equals(message)) {
+				down(key);
+			}
+			else if ("stop".equals(message)) {
+				stop(key);
+			}
+			else {
+				logger.warn("Unknown message: %s, source: ", message, key);
+			}
+		}
+		else {
+			logger.warn("Unknown source: %s", key);
+		}
+	}
+
+
+
+
+	/***********************************************/
+
 	private void keyReleased(char argKeyChar, String key) {
 		switch (argKeyChar) {
 			case 'w':
 			case 'a':
 			case 's':
 			case 'd':
-				stop(key);
+				processMessage(key, "stop");
 				break;
 		}
 	}
