@@ -1,4 +1,4 @@
-package client;
+package gsg.client;
 
 import com.google.common.collect.Maps;
 import org.apache.logging.log4j.LogManager;

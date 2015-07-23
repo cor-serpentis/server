@@ -1,4 +1,4 @@
-package client;
+package gsg.client;
 
 import java.io.DataInputStream;
 import java.io.PrintStream;
