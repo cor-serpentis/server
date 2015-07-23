@@ -3,7 +3,7 @@ package gsg.server.logic;
 import gsg.server.infrastructure.ConnectionRegistrator;
 import gsg.server.infrastructure.MessageRegistrator;
 import gsg.server.infrastructure.ServerUtils;
-import gsg.server.network.SocketLoop;
+import gsg.network.SocketLoop;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;

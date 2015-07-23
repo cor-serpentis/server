@@ -1,4 +1,4 @@
-package gsg.server.network;
+package gsg.network;
 
 import gsg.server.infrastructure.MessageRegistrator;
 import gsg.threads.IJob;
