@@ -14,20 +14,18 @@ import java.net.Socket;
 * @author zkejid@gmail.com
 *         Created: 14.07.15 23:33
 */
-public class SocketLoop implements IJob {
+public class SocketInputLoop implements IJob {
 
 	private Socket socket;
 	private String key;
 	private DataInputStream is;
-	private PrintStream os;
 	private MessageRegistrator registrator;
 
-	public SocketLoop(Socket socket, String key) {
+	public SocketInputLoop(Socket socket, String key) {
 		this.socket = socket;
 		this.key = key;
 		try {
 			is = new DataInputStream(socket.getInputStream());
-			os = new PrintStream(socket.getOutputStream());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -36,18 +34,16 @@ public class SocketLoop implements IJob {
 
 	@Override
 	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
-		String line = null;
-		while (true) {
-			try {
-				line = is.readLine();
-				if (registrator != null) {
-					registrator.registerMessage(key, line);
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+		String line;
+		try {
+			line = is.readLine();
+			if (registrator != null) {
+				registrator.registerMessage(key, line);
 			}
-			System.out.println("command: " + line);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
+		System.out.println("command: " + line);
 	}
 
 	public void setRegistrator(MessageRegistrator registrator) {
