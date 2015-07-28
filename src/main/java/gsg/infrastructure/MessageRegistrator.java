@@ -1,4 +1,4 @@
-package gsg.server.infrastructure;
+package gsg.infrastructure;
 
 /**
 * @author zkejid@gmail.com
