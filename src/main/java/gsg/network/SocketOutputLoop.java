@@ -18,7 +18,7 @@ public class SocketOutputLoop implements IJob, MessageRegistrator {
 	private Socket socket;
 	private String key;
 	private PrintStream os;
-	private ArrayBlockingQueue<Command> commands;
+	private ArrayBlockingQueue<String> commands;
 
 	public SocketOutputLoop(Socket socket, String key) {
 		this.socket = socket;
@@ -29,21 +29,21 @@ public class SocketOutputLoop implements IJob, MessageRegistrator {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		commands = new ArrayBlockingQueue<Command>(10);
+		commands = new ArrayBlockingQueue<String>(10);
 	}
 
 	@Override
 	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
-		final Command poll = commands.poll();
+		final String poll = commands.poll();
 		if (poll != null) {
-			os.println(poll.message);
-			System.out.println("source: "+poll.source+" command: " + poll.message);
+			os.println(poll);
+			System.out.println("command: " + poll);
 		}
 	}
 
 	@Override
-	public void registerMessage(String source, String message) {
-		commands.add(new Command(source, message));
+	public void registerMessage(String line) {
+		commands.add(line);
 	}
 
 	private class Command {

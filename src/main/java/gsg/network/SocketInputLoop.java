@@ -37,7 +37,7 @@ public class SocketInputLoop implements IJob {
 		try {
 			line = is.readLine();
 			if (registrator != null) {
-				registrator.registerMessage(key, line);
+				registrator.registerMessage(line);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

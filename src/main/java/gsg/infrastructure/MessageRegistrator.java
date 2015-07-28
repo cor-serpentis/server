@@ -5,5 +5,5 @@ package gsg.infrastructure;
 *         Created: 14.07.15 23:32
 */
 public interface MessageRegistrator {
-	void registerMessage(String source, String message);
+	void registerMessage(String line);
 }
