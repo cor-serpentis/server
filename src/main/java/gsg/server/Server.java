@@ -1,6 +1,6 @@
 package gsg.server;
 
-import gsg.server.infrastructure.ServerUtils;
+import gsg.infrastructure.Utils;
 import gsg.server.logic.GameLoop;
 import gsg.server.network.ConnectionLoop;
 
@@ -15,8 +15,8 @@ public class Server {
 
 		connectionLoop.setConnectionRegistrator(gameLoop);
 
-		ServerUtils.runLoop(connectionLoop);
-		ServerUtils.runLoopAndJoin(gameLoop);
+		Utils.runLoop(connectionLoop);
+		Utils.runLoopAndJoin(gameLoop);
 	}
 
 
