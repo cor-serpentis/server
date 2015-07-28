@@ -32,6 +32,7 @@ public class Utils {
 
 	public static JobRunner runLoop(IJob job) {
 		final JobRunnerConfiguration configuration = new JobRunnerConfiguration();
+		configuration.setDoLog(false);
 		final JobRunner runner = new JobRunner(configuration, job);
 		runner.start();
 		return runner;
