@@ -1,7 +1,9 @@
 package gsg.server.logic;
 
 import gsg.infrastructure.Utils;
+import gsg.network.ConnectionLibrary;
 import gsg.network.InputLoop;
+import gsg.network.SocketOutputLoop;
 import gsg.network.provider.ProviderFactory;
 import gsg.network.provider.input.InputStreamProvider;
 import gsg.server.infrastructure.ConnectionRegistrator;
@@ -24,9 +26,11 @@ import java.net.Socket;
 */
 public class GameLoop implements IJob, ConnectionRegistrator {
 	private final DumbView frame;
+	private final ConnectionLibrary connections;
 
 	public GameLoop() {
 		frame = new DumbView();
+		connections = new ConnectionLibrary();
 		TestbedModel model = new TestbedModel();
 		model.addTest(frame);
 		TestbedPanel panel = new TestPanelJ2D(model);
@@ -45,6 +49,8 @@ public class GameLoop implements IJob, ConnectionRegistrator {
 		final InputStreamProvider input = ProviderFactory.inputFromSocket(socket);
 		final String connect = frame.connect();
 		final InputLoop socketLoop = new InputLoop(connect, input, frame.getRegistrator());
+		final SocketOutputLoop socketOutputLoop = new SocketOutputLoop(socket, connect);
+		connections.add(connect, socketLoop, socketOutputLoop);
 		Utils.runLoop(socketLoop);
 	}
 }
