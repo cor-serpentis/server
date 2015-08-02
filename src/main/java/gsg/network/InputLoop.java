@@ -1,30 +1,28 @@
 package gsg.network;
 
 import gsg.infrastructure.MessageRegistrator;
+import gsg.network.provider.input.InputStreamProvider;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 /**
 * @author zkejid@gmail.com
 *         Created: 14.07.15 23:33
 */
-public class SocketInputLoop implements IJob {
+public class InputLoop implements IJob {
 
-	private Socket socket;
 	private String key;
 	private DataInputStream is;
 	private MessageRegistrator registrator;
 
-	public SocketInputLoop(Socket socket, String key) {
-		this.socket = socket;
+	public InputLoop(InputStreamProvider input, String key) {
 		this.key = key;
 		try {
-			is = new DataInputStream(socket.getInputStream());
+			is = new DataInputStream(input.getStream());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);

@@ -1,7 +1,8 @@
 package gsg.server.logic;
 
 import gsg.infrastructure.Utils;
-import gsg.network.SocketInputLoop;
+import gsg.network.InputLoop;
+import gsg.network.provider.ProviderFactory;
 import gsg.server.infrastructure.ConnectionRegistrator;
 import gsg.infrastructure.MessageRegistrator;
 import gsg.threads.IJob;
@@ -41,7 +42,7 @@ public class GameLoop implements IJob, ConnectionRegistrator, MessageRegistrator
 	@Override
 	public void registerConnection(Socket socket) {
 		final String connect = frame.connect();
-		final SocketInputLoop socketLoop = new SocketInputLoop(socket, connect);
+		final InputLoop socketLoop = new InputLoop(ProviderFactory.inputFromSocket(socket), connect);
 		socketLoop.setRegistrator(this);
 		Utils.runLoop(socketLoop);
 	}
