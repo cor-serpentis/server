@@ -1,6 +1,7 @@
 package gsg.client;
 
 import gsg.infrastructure.messages.MessageRegistrator;
+import gsg.network.OutputLoop;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
@@ -14,13 +15,11 @@ public class BotLoop implements IJob {
 	private static String[] route = new String[]{"left", "up", "right", "down", "down", "right", "up", "left"};
 
 	private int currentStep;
-	private String key;
-	private MessageRegistrator registrator;
+	private OutputLoop output;
 	private long time;
 
-	public BotLoop(String key, MessageRegistrator registrator) {
-		this.key = key;
-		this.registrator = registrator;
+	public BotLoop( OutputLoop output) {
+		this.output = output;
 		currentStep = -1;
 		time = -1L;
 	}
@@ -31,7 +30,7 @@ public class BotLoop implements IJob {
 			time = System.currentTimeMillis() + STEP_TIME;
 			currentStep = (currentStep + 1) % route.length;
 			final String line = route[currentStep];
-			registrator.registerMessage(key, line);
+			output.registerMessage(line);
 			System.out.println("client generates action: "+line);
 		}
 	}
