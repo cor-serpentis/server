@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author zkejid@gmail.com
  *         Created: 02.08.15 13:04
  */
-public class FrameMessageRegistrator implements MessageRegistrator{
+public class FrameMessageRegistrator implements ServerMessageRegistrator {
 
 	private ConcurrentLinkedQueue<Command> commands;
 

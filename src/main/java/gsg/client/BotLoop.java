@@ -1,6 +1,6 @@
 package gsg.client;
 
-import gsg.infrastructure.messages.MessageRegistrator;
+import gsg.infrastructure.messages.ServerMessageRegistrator;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
@@ -15,10 +15,10 @@ public class BotLoop implements IJob {
 
 	private int currentStep;
 	private String key;
-	private MessageRegistrator registrator;
+	private ServerMessageRegistrator registrator;
 	private long time;
 
-	public BotLoop(String key, MessageRegistrator registrator) {
+	public BotLoop(String key, ServerMessageRegistrator registrator) {
 		this.key = key;
 		this.registrator = registrator;
 		currentStep = -1;

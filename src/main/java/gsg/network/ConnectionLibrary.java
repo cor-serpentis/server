@@ -11,16 +11,16 @@ public class ConnectionLibrary {
 
 	private static class LibraryEntity {
 		public final InputLoop input;
-		public final SocketOutputLoop output;
+		public final OutputLoop output;
 
-		private LibraryEntity(InputLoop input, SocketOutputLoop output) {
+		private LibraryEntity(InputLoop input, OutputLoop output) {
 			this.input = input;
 			this.output = output;
 		}
 	}
 
 	//TODO not atomic map call
-	public void add(String key, InputLoop input, SocketOutputLoop output) {
+	public void add(String key, InputLoop input, OutputLoop output) {
 		if (key == null || input == null || output == null) {
 			throw new RuntimeException(String.format(
 					"Null arguments (key/input/output): %s/ %s / %s", key, input, output));
@@ -46,7 +46,7 @@ public class ConnectionLibrary {
 		return libraryEntity;
 	}
 
-	public SocketOutputLoop getOutput(String key) {
+	public OutputLoop getOutput(String key) {
 		final LibraryEntity libraryEntity = getLibraryEntity(key);
 		return libraryEntity.output;
 	}
