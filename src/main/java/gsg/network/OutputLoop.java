@@ -33,6 +33,7 @@ public class OutputLoop implements IJob {
 		final String poll = commands.poll();
 		if (poll != null) {
 			os.println(poll);
+			System.out.println("OutputLoop: "+poll);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package gsg.server.logic;
 
 import gsg.infrastructure.Utils;
+import gsg.infrastructure.messages.MessageContainer;
 import gsg.network.ConnectionLibrary;
 import gsg.network.InputLoop;
 import gsg.network.OutputLoop;
@@ -40,16 +41,22 @@ public class GameLoop implements IJob, ConnectionRegistrator {
 
 	@Override
 	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
-
+		final MessageContainer.Command message = frame.getOutgoingMessages().getMessage();
+		if (message != null) {
+			System.out.println("GameLoop: "+message.source+" "+message.line);
+			final OutputLoop output = connections.getOutput(message.source);
+			output.registerMessage(message.line);
+		}
 	}
 
 	@Override
 	public void registerConnection(Socket socket) {
 		final InputStreamProvider input = ProviderFactory.inputFromSocket(socket);
 		final String connect = frame.connect();
-		final InputLoop socketLoop = new InputLoop(connect, input, frame.getRegistrator());
+		final InputLoop inputLoop = new InputLoop(connect, input, frame.getIncomingMessages());
 		final OutputLoop outputLoop = new OutputLoop(ProviderFactory.outputToSocket(socket));
-		connections.add(connect, socketLoop, outputLoop);
-		Utils.runLoop(socketLoop);
+		connections.add(connect, inputLoop, outputLoop);
+		Utils.runLoop(inputLoop);
+		Utils.runLoop(outputLoop);
 	}
 }

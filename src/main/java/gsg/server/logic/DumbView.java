@@ -1,7 +1,7 @@
 package gsg.server.logic;
 
 import com.google.common.collect.Maps;
-import gsg.infrastructure.messages.FrameMessageRegistrator;
+import gsg.infrastructure.messages.MessageContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -15,7 +15,6 @@ import org.jbox2d.testbed.framework.TestbedTest;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * @author zkejid@gmail.com
@@ -28,7 +27,8 @@ public class DumbView extends TestbedTest {
 	private final Map<String, Body> bodies = Maps.newHashMap();
 	private final ArrayBlockingQueue<String> queueOfConnectionsUp = new ArrayBlockingQueue<String>(10);
 	private final ArrayBlockingQueue<String> queueOfConnectionsDown = new ArrayBlockingQueue<String>(10);
-	private final FrameMessageRegistrator registrator = new FrameMessageRegistrator();
+	private final MessageContainer incomingMessages = new MessageContainer();
+	private final MessageContainer outgoingMessages = new MessageContainer();
 
 	private String self;
 
@@ -205,8 +205,8 @@ public class DumbView extends TestbedTest {
 		}
 	}
 
-	public FrameMessageRegistrator getRegistrator() {
-		return registrator;
+	public MessageContainer getIncomingMessages() {
+		return incomingMessages;
 	}
 
 	@Override
@@ -220,9 +220,15 @@ public class DumbView extends TestbedTest {
 	 * It should be called by main loop.
 	 */
 	private void doStep() {
-		final FrameMessageRegistrator.Command message = registrator.getMessage();
+		final MessageContainer.Command message = incomingMessages.getMessage();
 		if (message != null) {
+			System.out.println("DumbView: source: "+message.source+" message: "+message.line);
 			processMessage(message.source, message.line);
+			outgoingMessages.registerMessage(message.source, message.line);
 		}
+	}
+
+	public MessageContainer getOutgoingMessages() {
+		return outgoingMessages;
 	}
 }

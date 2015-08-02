@@ -41,6 +41,6 @@ public class InputLoop implements IJob {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		System.out.println("command: " + line);
+		System.out.println("InputLoop: command: " + line);
 	}
 }
