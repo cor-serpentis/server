@@ -1,5 +1,6 @@
 package gsg.server;
 
+import gsg.client.Bot;
 import gsg.infrastructure.Utils;
 import gsg.server.logic.GameLoop;
 import gsg.server.network.ConnectionLoop;
@@ -16,7 +17,9 @@ public class Server {
 		connectionLoop.setConnectionRegistrator(gameLoop);
 
 		Utils.runLoop(connectionLoop);
-		Utils.runLoopAndJoin(gameLoop);
+		Utils.runLoop(gameLoop);
+
+		Bot.main(args);
 	}
 
 
