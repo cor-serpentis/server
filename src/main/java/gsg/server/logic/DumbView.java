@@ -1,6 +1,7 @@
 package gsg.server.logic;
 
 import com.google.common.collect.Maps;
+import gsg.infrastructure.messages.FrameMessageRegistrator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -27,6 +28,7 @@ public class DumbView extends TestbedTest {
 	private final Map<String, Body> bodies = Maps.newHashMap();
 	private final ArrayBlockingQueue<String> queueOfConnectionsUp = new ArrayBlockingQueue<String>(10);
 	private final ArrayBlockingQueue<String> queueOfConnectionsDown = new ArrayBlockingQueue<String>(10);
+	private final FrameMessageRegistrator registrator = new FrameMessageRegistrator();
 
 	private String self;
 
@@ -200,6 +202,27 @@ public class DumbView extends TestbedTest {
 				self.createFixture(polygonShape, 5.0f);
 				bodies.put(up, self);
 			}
+		}
+	}
+
+	public FrameMessageRegistrator getRegistrator() {
+		return registrator;
+	}
+
+	@Override
+	public void update() {
+		super.update();
+		doStep();
+	}
+
+	/**
+	 * Method contains code to process on each step of visualization.
+	 * It should be called by main loop.
+	 */
+	private void doStep() {
+		final FrameMessageRegistrator.Command message = registrator.getMessage();
+		if (message != null) {
+			processMessage(message.source, message.line);
 		}
 	}
 }

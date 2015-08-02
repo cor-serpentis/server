@@ -1,6 +1,6 @@
 package gsg.network;
 
-import gsg.infrastructure.MessageRegistrator;
+import gsg.infrastructure.messages.MessageRegistrator;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
@@ -42,7 +42,7 @@ public class SocketOutputLoop implements IJob, MessageRegistrator {
 	}
 
 	@Override
-	public void registerMessage(String line) {
+	public void registerMessage(String source, String line) {
 		commands.add(line);
 	}
 

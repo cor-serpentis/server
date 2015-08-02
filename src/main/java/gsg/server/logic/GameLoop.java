@@ -3,8 +3,9 @@ package gsg.server.logic;
 import gsg.infrastructure.Utils;
 import gsg.network.InputLoop;
 import gsg.network.provider.ProviderFactory;
+import gsg.network.provider.input.InputStreamProvider;
 import gsg.server.infrastructure.ConnectionRegistrator;
-import gsg.infrastructure.MessageRegistrator;
+import gsg.infrastructure.messages.MessageRegistrator;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
@@ -21,7 +22,7 @@ import java.net.Socket;
 * @author zkejid@gmail.com
 *         Created: 14.07.15 23:36
 */
-public class GameLoop implements IJob, ConnectionRegistrator, MessageRegistrator {
+public class GameLoop implements IJob, ConnectionRegistrator {
 	private final DumbView frame;
 
 	public GameLoop() {
@@ -41,16 +42,9 @@ public class GameLoop implements IJob, ConnectionRegistrator, MessageRegistrator
 
 	@Override
 	public void registerConnection(Socket socket) {
+		final InputStreamProvider input = ProviderFactory.inputFromSocket(socket);
 		final String connect = frame.connect();
-		final InputLoop socketLoop = new InputLoop(ProviderFactory.inputFromSocket(socket), connect);
-		socketLoop.setRegistrator(this);
+		final InputLoop socketLoop = new InputLoop(connect, input, frame.getRegistrator());
 		Utils.runLoop(socketLoop);
-	}
-
-	@Override
-	public void registerMessage(String line) {
-		final String key = Utils.getKey(line);
-		final String message = Utils.getMessage(line);
-		frame.processMessage(key, message);
 	}
 }

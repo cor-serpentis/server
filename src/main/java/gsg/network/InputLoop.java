@@ -1,6 +1,6 @@
 package gsg.network;
 
-import gsg.infrastructure.MessageRegistrator;
+import gsg.infrastructure.messages.MessageRegistrator;
 import gsg.network.provider.input.InputStreamProvider;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
@@ -15,12 +15,13 @@ import java.io.IOException;
 */
 public class InputLoop implements IJob {
 
-	private String key;
 	private DataInputStream is;
+	private final String name;
 	private MessageRegistrator registrator;
 
-	public InputLoop(InputStreamProvider input, String key) {
-		this.key = key;
+	public InputLoop(String name, InputStreamProvider input, MessageRegistrator registrator) {
+		this.name = name;
+		this.registrator = registrator;
 		try {
 			is = new DataInputStream(input.getStream());
 
@@ -35,15 +36,11 @@ public class InputLoop implements IJob {
 		try {
 			line = is.readLine();
 			if (registrator != null) {
-				registrator.registerMessage(line);
+				registrator.registerMessage(name, line);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		System.out.println("command: " + line);
-	}
-
-	public void setRegistrator(MessageRegistrator registrator) {
-		this.registrator = registrator;
 	}
 }

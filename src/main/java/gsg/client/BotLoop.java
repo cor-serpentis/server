@@ -1,6 +1,6 @@
 package gsg.client;
 
-import gsg.infrastructure.MessageRegistrator;
+import gsg.infrastructure.messages.MessageRegistrator;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
@@ -31,8 +31,8 @@ public class BotLoop implements IJob {
 			time = System.currentTimeMillis() + STEP_TIME;
 			currentStep = (currentStep + 1) % route.length;
 			//key should be checked by server. not client.
-			final String line = key + " " + route[currentStep];
-			registrator.registerMessage(line);
+			final String line = route[currentStep];
+			registrator.registerMessage(key, line);
 			System.out.println("client generates action: "+line);
 		}
 	}
