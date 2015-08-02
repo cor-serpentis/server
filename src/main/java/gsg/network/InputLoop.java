@@ -1,6 +1,6 @@
 package gsg.network;
 
-import gsg.infrastructure.messages.ServerMessageRegistrator;
+import gsg.infrastructure.messages.MessageRegistrator;
 import gsg.network.provider.input.InputStreamProvider;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
@@ -17,9 +17,9 @@ public class InputLoop implements IJob {
 
 	private DataInputStream is;
 	private final String name;
-	private ServerMessageRegistrator registrator;
+	private MessageRegistrator registrator;
 
-	public InputLoop(String name, InputStreamProvider input, ServerMessageRegistrator registrator) {
+	public InputLoop(String name, InputStreamProvider input, MessageRegistrator registrator) {
 		this.name = name;
 		this.registrator = registrator;
 		try {

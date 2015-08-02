@@ -1,6 +1,5 @@
 package gsg.network;
 
-import gsg.infrastructure.messages.ServerMessageRegistrator;
 import gsg.network.provider.input.OutputStreamProvider;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;

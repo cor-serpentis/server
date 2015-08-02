@@ -1,7 +1,7 @@
 package gsg.client;
 
 import gsg.infrastructure.Utils;
-import gsg.infrastructure.messages.ServerMessageRegistrator;
+import gsg.infrastructure.messages.MessageRegistrator;
 import gsg.network.InputLoop;
 import gsg.network.provider.input.RawInputStreamProvider;
 
@@ -20,7 +20,7 @@ public class Bot {
 			Socket s = new Socket("localhost", 9189);
 
 			final DataInputStream is = new DataInputStream(s.getInputStream());
-			InputLoop inputLoop = new InputLoop("server", new RawInputStreamProvider(is), new ServerMessageRegistrator() {
+			InputLoop inputLoop = new InputLoop("server", new RawInputStreamProvider(is), new MessageRegistrator() {
 				@Override
 				public void registerMessage(String source, String line) {
 					System.out.println(source+": "+line);
