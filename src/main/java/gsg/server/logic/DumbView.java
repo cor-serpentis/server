@@ -2,6 +2,7 @@ package gsg.server.logic;
 
 import com.google.common.collect.Maps;
 import gsg.infrastructure.messages.MessageContainer;
+import gsg.infrastructure.messages.MessageProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -29,11 +30,16 @@ public class DumbView extends TestbedTest {
 	private final ArrayBlockingQueue<String> queueOfConnectionsDown = new ArrayBlockingQueue<String>(10);
 	private final MessageContainer incomingMessages = new MessageContainer();
 	private final MessageContainer outgoingMessages = new MessageContainer();
+	private final ServerMessageProcessor messageProcessor;
 
 	private String self;
 
 
 	final int velocity = 10;
+
+	public DumbView() {
+		this.messageProcessor = new ServerMessageProcessor(this);
+	}
 
 	@Override
 	public void initTest(boolean argDeserialized) {
@@ -126,24 +132,7 @@ public class DumbView extends TestbedTest {
 
 	public void processMessage(String key, String message) {
 		if (bodies.containsKey(key)) {
-			if ("left".equals(message)) {
-				left(key);
-			}
-			else if ("right".equals(message)) {
-				right(key);
-			}
-			else if ("up".equals(message)) {
-				up(key);
-			}
-			else if ("down".equals(message)) {
-				down(key);
-			}
-			else if ("stop".equals(message)) {
-				stop(key);
-			}
-			else {
-				logger.warn("Unknown message: %s, source: ", message, key);
-			}
+			messageProcessor.process(message+" "+key);
 		}
 		else {
 			logger.warn("Unknown source: %s", key);
@@ -166,7 +155,7 @@ public class DumbView extends TestbedTest {
 		}
 	}
 
-	private void stop(String key) {
+	public void stop(String key) {
 		if (bodies.containsKey(key)) {
 			bodies.get(key).setLinearVelocity(new Vec2());
 		}
