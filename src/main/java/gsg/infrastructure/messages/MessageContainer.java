@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author zkejid@gmail.com
  *         Created: 02.08.15 13:04
  */
-public class MessageContainer implements MessageRegistrator {
+public class MessageContainer implements IContainer {
 
 	private ConcurrentLinkedQueue<Command> commands;
 
@@ -20,17 +20,9 @@ public class MessageContainer implements MessageRegistrator {
 		System.out.println("MessageContainer: source: "+source+" message: "+line);
 	}
 
+	@Override
 	public Command getMessage() {
 		return commands.poll();
 	}
 
-	public static class Command {
-		public final String source;
-		public final String line;
-
-		public Command(String line, String source) {
-			this.line = line;
-			this.source = source;
-		}
-	}
 }

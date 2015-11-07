@@ -1,6 +1,7 @@
 package gsg.server.logic;
 
 import gsg.infrastructure.Utils;
+import gsg.infrastructure.messages.IContainer;
 import gsg.infrastructure.messages.MessageContainer;
 import gsg.network.ConnectionLibrary;
 import gsg.network.InputLoop;
@@ -8,6 +9,7 @@ import gsg.network.OutputLoop;
 import gsg.network.provider.ProviderFactory;
 import gsg.network.provider.input.InputStreamProvider;
 import gsg.server.infrastructure.ConnectionRegistrator;
+import gsg.server.network.ConnectionLoop;
 import gsg.threads.IJob;
 import gsg.threads.JobRunnerConfiguration;
 import gsg.threads.JobRunnerData;
@@ -24,13 +26,19 @@ import java.net.Socket;
 * @author zkejid@gmail.com
 *         Created: 14.07.15 23:36
 */
-public class GameLoop implements IJob, ConnectionRegistrator {
+public class GameLoop implements IJob {
 	private final DumbView frame;
-	private final ConnectionLibrary connections;
+	private final MessageLoop messageLoop;
+	private final ConnectionLoop connectionLoop;
 
 	public GameLoop() {
 		frame = new DumbView();
-		connections = new ConnectionLibrary();
+		final MessageTransport messageTransport = new MessageTransport();
+		final IContainer frameSide = messageTransport.getSide1();
+		final ServerMessageProcessor messageProcessor = new ServerMessageProcessor(frame, frameSide);
+		messageLoop = new MessageLoop(messageProcessor);
+		connectionLoop = new ConnectionLoop(9189, messageLoop);
+
 		TestbedModel model = new TestbedModel();
 		model.addTest(frame);
 		TestbedPanel panel = new TestPanelJ2D(model);
@@ -40,23 +48,12 @@ public class GameLoop implements IJob, ConnectionRegistrator {
 	}
 
 	@Override
-	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
-		final MessageContainer.Command message = frame.getOutgoingMessages().getMessage();
-		if (message != null) {
-			System.out.println("GameLoop: "+message.source+" "+message.line);
-			final OutputLoop output = connections.getOutput(message.source);
-			output.registerMessage(message.line);
-		}
+	public void onStart(){
+		Utils.runLoop(messageLoop);
+		Utils.runLoop(connectionLoop);
 	}
 
 	@Override
-	public void registerConnection(Socket socket) {
-		final InputStreamProvider input = ProviderFactory.inputFromSocket(socket);
-		final String connect = frame.connect();
-		final InputLoop inputLoop = new InputLoop(connect, input, frame.getIncomingMessages());
-		final OutputLoop outputLoop = new OutputLoop(ProviderFactory.outputToSocket(socket));
-		connections.add(connect, inputLoop, outputLoop);
-		Utils.runLoop(inputLoop);
-		Utils.runLoop(outputLoop);
+	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
 	}
 }

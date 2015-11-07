@@ -19,9 +19,16 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author zkejid@gmail.com
  *         Created: 13.07.15 23:01
  */
-public class DumbView extends TestbedTest {
+public class ClientDumbView extends TestbedTest {
 
 	private static final Logger logger = LogManager.getLogger();
+	public static final String LEFT = "left ";
+	public static final String RIGHT = "right ";
+	public static final String UP = "up ";
+	public static final String DOWN = "down ";
+	public static final String STOP = "stop ";
+	public static final String CREATE_SELF = "create self ";
+	public static final String CREATE_USER = "create user ";
 
 	private final Map<String, Body> bodies = Maps.newHashMap();
 	private final ArrayBlockingQueue<String> queueOfConnectionsUp = new ArrayBlockingQueue<String>(10);
@@ -37,12 +44,6 @@ public class DumbView extends TestbedTest {
 		setTitle("Couple of Things Test");
 
 		getWorld().setGravity(new Vec2());
-		createSelf();
-//			createBox(1);
-	}
-
-	private void createSelf() {
-		self = connect();
 	}
 
 	@Override
@@ -50,8 +51,8 @@ public class DumbView extends TestbedTest {
 		return "Test World";
 	}
 
-	public String connect() {
-		final String key = UUID.randomUUID().toString();
+	public String connect(String connect) {
+		final String key = connect == null ? UUID.randomUUID().toString() : connect;
 		queueOfConnectionsUp.add(key);
 		return key;
 	}
@@ -73,23 +74,23 @@ public class DumbView extends TestbedTest {
 	}
 
 	private void keyPressed(char argKeyChar, String key) {
-		switch (argKeyChar) {
-			case 'w':
-				processMessage(key, "up");
-				break;
-
-			case 'a':
-				processMessage(key, "left");
-				break;
-
-			case 's':
-				processMessage(key, "down");
-				break;
-
-			case 'd':
-				processMessage(key, "right");
-				break;
-		}
+//		switch (argKeyChar) {
+//			case 'w':
+//				processMessage("up");
+//				break;
+//
+//			case 'a':
+//				processMessage("left");
+//				break;
+//
+//			case 's':
+//				processMessage("down");
+//				break;
+//
+//			case 'd':
+//				processMessage("right");
+//				break;
+//		}
 	}
 
 	public void right(String key) {
@@ -121,33 +122,44 @@ public class DumbView extends TestbedTest {
 		keyReleased(argKeyChar,  self);
 	}
 
-	public void processMessage(String key, String message) {
-		if (bodies.containsKey(key)) {
-			if ("left".equals(message)) {
-				left(key);
-			}
-			else if ("right".equals(message)) {
-				right(key);
-			}
-			else if ("up".equals(message)) {
-				up(key);
-			}
-			else if ("down".equals(message)) {
-				down(key);
-			}
-			else if ("stop".equals(message)) {
-				stop(key);
-			}
-			else {
-				logger.warn("Unknown message: %s, source: ", message, key);
-			}
+	public void processMessage(String message) {
+		if (message.startsWith(LEFT)) {
+			String userUID = getTail(message, LEFT);
+			left(userUID);
+		}
+		else if (message.startsWith(RIGHT)) {
+			String userUID = getTail(message, RIGHT);
+			right(userUID);
+		}
+		else if (message.startsWith(UP)) {
+			String userUID = getTail(message, UP);
+			up(userUID);
+		}
+		else if (message.startsWith(DOWN)) {
+			String userUID = getTail(message, DOWN);
+			down(userUID);
+		}
+		else if (message.startsWith(STOP)) {
+			String userUID = getTail(message, STOP);
+			stop(userUID);
+		}
+		else if (message.startsWith(CREATE_SELF)) {
+			String userUID = getTail(message, CREATE_SELF);
+			self = userUID;
+			connect(userUID);
+		}
+		else if (message.startsWith(CREATE_USER)) {
+			String userUID = getTail(message, CREATE_USER);
+			connect(userUID);
 		}
 		else {
-			logger.warn("Unknown source: %s", key);
+			logger.warn("Unknown message: %s", message);
 		}
 	}
 
-
+	private String getTail(String message, String command) {
+		return message.substring(command.length());
+	}
 
 
 	/***********************************************/
@@ -158,7 +170,7 @@ public class DumbView extends TestbedTest {
 			case 'a':
 			case 's':
 			case 'd':
-				processMessage(key, "stop");
+				processMessage("stop");
 				break;
 		}
 	}

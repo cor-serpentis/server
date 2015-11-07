@@ -13,6 +13,8 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -28,30 +30,15 @@ public class DumbView extends TestbedTest {
 	private final Map<String, Body> bodies = Maps.newHashMap();
 	private final ArrayBlockingQueue<String> queueOfConnectionsUp = new ArrayBlockingQueue<String>(10);
 	private final ArrayBlockingQueue<String> queueOfConnectionsDown = new ArrayBlockingQueue<String>(10);
-	private final MessageContainer incomingMessages = new MessageContainer();
-	private final MessageContainer outgoingMessages = new MessageContainer();
-	private final ServerMessageProcessor messageProcessor;
-
-	private String self;
-
 
 	final int velocity = 10;
-
-	public DumbView() {
-		this.messageProcessor = new ServerMessageProcessor(this);
-	}
 
 	@Override
 	public void initTest(boolean argDeserialized) {
 		setTitle("Couple of Things Test");
 
 		getWorld().setGravity(new Vec2());
-		createSelf();
 //			createBox(1);
-	}
-
-	private void createSelf() {
-		self = connect();
 	}
 
 	@Override
@@ -59,6 +46,9 @@ public class DumbView extends TestbedTest {
 		return "Test World";
 	}
 
+	/**
+	 * Generate UID for connection. Schedule display of connected user
+	 */
 	public String connect() {
 		final String key = UUID.randomUUID().toString();
 		queueOfConnectionsUp.add(key);
@@ -73,32 +63,6 @@ public class DumbView extends TestbedTest {
 	public synchronized void step(TestbedSettings settings) {
 		adjustConnections();
 		super.step(settings);
-	}
-
-
-	@Override
-	public void keyPressed(char argKeyChar, int argKeyCode) {
-		keyPressed(argKeyChar, self);
-	}
-
-	private void keyPressed(char argKeyChar, String key) {
-		switch (argKeyChar) {
-			case 'w':
-				processMessage(key, "up");
-				break;
-
-			case 'a':
-				processMessage(key, "left");
-				break;
-
-			case 's':
-				processMessage(key, "down");
-				break;
-
-			case 'd':
-				processMessage(key, "right");
-				break;
-		}
 	}
 
 	public void right(String key) {
@@ -125,35 +89,12 @@ public class DumbView extends TestbedTest {
 		}
 	}
 
-	@Override
-	public void keyReleased(char argKeyChar, int argKeyCode) {
-		keyReleased(argKeyChar,  self);
-	}
 
-	public void processMessage(String key, String message) {
-		if (bodies.containsKey(key)) {
-			messageProcessor.process(message+" "+key);
-		}
-		else {
-			logger.warn("Unknown source: %s", key);
-		}
-	}
 
 
 
 
 	/***********************************************/
-
-	private void keyReleased(char argKeyChar, String key) {
-		switch (argKeyChar) {
-			case 'w':
-			case 'a':
-			case 's':
-			case 'd':
-				processMessage(key, "stop");
-				break;
-		}
-	}
 
 	public void stop(String key) {
 		if (bodies.containsKey(key)) {
@@ -194,10 +135,6 @@ public class DumbView extends TestbedTest {
 		}
 	}
 
-	public MessageContainer getIncomingMessages() {
-		return incomingMessages;
-	}
-
 	@Override
 	public void update() {
 		super.update();
@@ -209,15 +146,6 @@ public class DumbView extends TestbedTest {
 	 * It should be called by main loop.
 	 */
 	private void doStep() {
-		final MessageContainer.Command message = incomingMessages.getMessage();
-		if (message != null) {
-			System.out.println("DumbView: source: "+message.source+" message: "+message.line);
-			processMessage(message.source, message.line);
-			outgoingMessages.registerMessage(message.source, message.line);
-		}
-	}
 
-	public MessageContainer getOutgoingMessages() {
-		return outgoingMessages;
 	}
 }

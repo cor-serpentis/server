@@ -14,7 +14,6 @@ import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 
 import javax.swing.*;
 import java.io.DataInputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 
 /**
@@ -27,7 +26,7 @@ public class Bot {
 		try {
 			Socket s = new Socket("localhost", 9189);
 
-			final DumbView frame = new DumbView();
+			final ClientDumbView frame = new ClientDumbView();
 			TestbedModel model = new TestbedModel();
 			model.addTest(frame);
 			TestbedPanel panel = new TestPanelJ2D(model);
@@ -36,12 +35,12 @@ public class Bot {
 			testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 			final DataInputStream is = new DataInputStream(s.getInputStream());
-			final String key = frame.connect();
+			final String key = "SERVER SAYS!!!!!";
 			InputLoop inputLoop = new InputLoop(key, new RawInputStreamProvider(is), new MessageRegistrator() {
 				@Override
 				public void registerMessage(String source, String line) {
-					System.out.println(source+": "+line);
-					frame.processMessage(source, line);
+					System.out.println(key +": "+line);
+					frame.processMessage(line);
 				}
 			});
 			Utils.runLoop(inputLoop);

@@ -31,6 +31,9 @@ public class InputLoop implements IJob {
 	}
 
 	@Override
+	public void onStart() {}
+
+	@Override
 	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
 		String line;
 		try {

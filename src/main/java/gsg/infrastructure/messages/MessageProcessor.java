@@ -14,8 +14,8 @@ public class MessageProcessor {
 
 	protected Node root;
 
-	public void process(String message) {
-		root.process(message);
+	public void process(String source, String message) {
+		root.process(source, message);
 	}
 
 	/**
@@ -34,8 +34,8 @@ public class MessageProcessor {
 			}
 		}
 		else {
-			result[0] = "";
-			result[1] = arg.substring(SEPARATOR.length(), arg.length());
+			result[0] = arg;
+			result[1] = "";
 		}
 		return result;
 	}
@@ -63,12 +63,12 @@ public class MessageProcessor {
 			this.children = children;
 		}
 
-		public abstract void process(String message);
+		public abstract void process(String source, String message);
 
-		public void applyToNodeList(String head, String tail) {
+		public void applyToNodeList(String source, String head, String tail) {
 			for (Node child : children) {
 				if (head.equals(child.name)) {
-					child.process(tail);
+					child.process(source, tail);
 					return;
 				}
 			}
@@ -83,8 +83,8 @@ public class MessageProcessor {
 			this.action = action;
 		}
 
-		public void process(String message) {
-			action.doAction(message);
+		public void process(String source, String message) {
+			action.doAction(source, message);
 		}
 	}
 
@@ -93,22 +93,22 @@ public class MessageProcessor {
 			super(name, children);
 		}
 
-		public void process(String message) {
+		public void process(String source, String message) {
 			final String[] headAndTail = split(message);
 			final String head = headAndTail[0];
 			final String tail = headAndTail[1];
-			applyToNodeList(head, tail);
+			applyToNodeList(source, head, tail);
 		}
 	}
 
 	public static interface MessageProcessorAction {
-		void doAction(String arguments);
+		void doAction(String source, String arguments);
 	}
 
 	public static class PrintToConsoleAction implements MessageProcessorAction {
 
 		@Override
-		public void doAction(String arguments) {
+		public void doAction(String source, String arguments) {
 			System.out.println(arguments);
 		}
 	}

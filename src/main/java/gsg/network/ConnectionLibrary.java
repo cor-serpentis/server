@@ -1,13 +1,22 @@
 package gsg.network;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author zkejid@gmail.com
  *         Created: 02.08.15 14:14
  */
-public class ConnectionLibrary {
+public class ConnectionLibrary implements ConnectionsList {
 	private final ConcurrentHashMap<String, LibraryEntity> data = new ConcurrentHashMap<String, LibraryEntity>();
+
+	@Override
+	public Set<String> getConnectionIDs() {
+		return data.keySet();
+	}
 
 	private static class LibraryEntity {
 		public final InputLoop input;

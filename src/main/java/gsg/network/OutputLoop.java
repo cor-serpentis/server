@@ -28,6 +28,9 @@ public class OutputLoop implements IJob {
 	}
 
 	@Override
+	public void onStart() {}
+
+	@Override
 	public void doJob(JobRunnerConfiguration configuration, JobRunnerData jobRunnerData) {
 		final String poll = commands.poll();
 		if (poll != null) {

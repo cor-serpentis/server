@@ -25,6 +25,9 @@ public class BotLoop implements IJob {
 	}
 
 	@Override
+	public void onStart() {}
+
+	@Override
 	public void doJob(JobRunnerConfiguration configuration, JobRunnerData data) {
 		if (timeHasCome()) {
 			time = System.currentTimeMillis() + STEP_TIME;
@@ -38,5 +41,6 @@ public class BotLoop implements IJob {
 	private boolean timeHasCome() {
 		final long currentTime = System.currentTimeMillis();
 		return currentTime >= time;
+//		return false;
 	}
 }

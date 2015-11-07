@@ -3,6 +3,7 @@ package gsg.server;
 import gsg.client.Bot;
 import gsg.infrastructure.Utils;
 import gsg.server.logic.GameLoop;
+import gsg.server.logic.MessageLoop;
 import gsg.server.network.ConnectionLoop;
 
 /**
@@ -11,12 +12,7 @@ import gsg.server.network.ConnectionLoop;
  */
 public class Server {
 	public static void main(String[] args) {
-		final ConnectionLoop connectionLoop = new ConnectionLoop(9189);
 		final GameLoop gameLoop = new GameLoop();
-
-		connectionLoop.setConnectionRegistrator(gameLoop);
-
-		Utils.runLoop(connectionLoop);
 		Utils.runLoop(gameLoop);
 
 		Bot.main(args);

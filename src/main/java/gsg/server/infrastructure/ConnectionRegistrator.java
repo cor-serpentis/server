@@ -1,5 +1,7 @@
 package gsg.server.infrastructure;
 
+import gsg.infrastructure.messages.MessageContainer;
+
 import java.net.Socket;
 
 /**

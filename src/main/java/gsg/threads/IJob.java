@@ -6,4 +6,6 @@ package gsg.threads;
  */
 public interface IJob {
 	void doJob(JobRunnerConfiguration configuration, JobRunnerData data);
+
+	void onStart();
 }
