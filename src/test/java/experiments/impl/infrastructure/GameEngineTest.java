@@ -16,44 +16,9 @@ import static org.junit.Assert.*;
 public class GameEngineTest {
 
 	/**
-	 * Сценарий: пустой мир отсчитал три тика.
+	 * Scenario: 3 ticks left. Than 3 ticks more left, calling an action each time. Than 3 ticks more left without any action.
 	 */
 	@Test
-	public void testTicksLeft() {
-		final GameEngine engine = new GameEngine();
-
-		engine.doNextTick();
-		engine.doNextTick();
-		engine.doNextTick();
-
-		assertEquals(3L, engine.getTicksLeft());
-	}
-
-	/**
-	 * Сценарий: пустой мир отсчитал три тика. Каждый тик запустил одно действие.
-	 */
-	public void testDoTickAction() {
-		final AtomicLong result = new AtomicLong(0L);
-		final GameEngine engine = new GameEngine();
-		final ITickAction action = new ITickAction() {
-			@Override
-			public void doAction() {
-				result.incrementAndGet();
-			}
-		};
-		engine.addTickAction(action);
-
-		engine.doNextTick();
-		engine.doNextTick();
-		engine.doNextTick();
-
-		assertEquals(result.get(), engine.getTicksLeft());
-	}
-
-	/**
-	 * Сценарий: пустой мир отсчитал три тика. Каждый тик запустил одно действие.
-	 * После чего мир отсчитал ещё три тика не выполнив действий.
-	 */
 	public void testDoTickActionAndDelete() {
 		final AtomicLong result = new AtomicLong(0L);
 		final GameEngine engine = new GameEngine();
@@ -63,19 +28,69 @@ public class GameEngineTest {
 				result.incrementAndGet();
 			}
 		};
+
+		final long checkpointZero = engine.getTicksLeft();
+
+		engine.doNextTick();
+		engine.doNextTick();
+		engine.doNextTick();
+
+		final long checkpointOne = engine.getTicksLeft();
 		final IIdentifier actionId = engine.addTickAction(action);
 
 		engine.doNextTick();
 		engine.doNextTick();
 		engine.doNextTick();
 
+		final long checkpointTwo = engine.getTicksLeft();
 		engine.removeTickAction(actionId);
 
 		engine.doNextTick();
 		engine.doNextTick();
 		engine.doNextTick();
 
+		final long checkpointThree = engine.getTicksLeft();
+
+		assertEquals(0L, checkpointZero);
+		assertEquals(3L, checkpointOne);
+		assertEquals(6L, checkpointTwo);
+		assertEquals(9L, checkpointThree);
 		assertEquals(3L, result.get());
-		assertEquals(6L, engine.getTicksLeft());
+	}
+
+	/**
+	 * Scenario: null argument of 'addTickAction' should produce exception
+	 */
+	@Test(expected = RuntimeException.class)
+	public void addTickActionNegative() {
+		final GameEngine engine = new GameEngine();
+
+		engine.addTickAction(null);
+	}
+
+	/**
+	 * Scenario: null argument of 'removeTickAction' should produce exception
+	 */
+	@Test(expected = RuntimeException.class)
+	public void removeTickActionNegativeNull() {
+		final GameEngine engine = new GameEngine();
+
+		engine.removeTickAction(null);
+	}
+
+	/**
+	 * Scenario: remove action which doesn't exist should produce exception
+	 */
+	@Test(expected = RuntimeException.class)
+	public void removeTickActionNegativeObsolete() {
+		final GameEngine engine = new GameEngine();
+		final IIdentifier identifier = engine.addTickAction(new ITickAction() {
+			@Override
+			public void doAction() {
+			}
+		});
+
+		engine.removeTickAction(identifier);
+		engine.removeTickAction(identifier);
 	}
 }
