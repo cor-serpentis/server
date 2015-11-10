@@ -36,8 +36,7 @@ public class GameEngine implements IGameEngine {
 		if (action == null) {
 			throw new RuntimeException("argument should not be null");
 		}
-
-		final IIdentifier identifier = Identifier.newId();
+		IIdentifier identifier = action.getId();
 		actions.put(identifier, action);
 		return identifier;
 	}

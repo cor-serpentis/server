@@ -1,8 +1,8 @@
 package experiments.impl.infrastructure;
 
+import experiments.api.notions.IDirection;
 import experiments.api.notions.IIdentifier;
 import experiments.api.notions.IPosition;
-import experiments.impl.notions.Direction;
 import experiments.impl.notions.FieldObject;
 import experiments.impl.notions.FieldPosition;
 import experiments.impl.notions.Identifier;
@@ -31,17 +31,27 @@ public class PhysicsEngineTest {
 	}
 
 	/**
-	 * Scenario: delete object. Getting object should produce exception.
+	 * Scenario: add object twice should produce exception.
 	 */
 	@Test(expected = RuntimeException.class)
+	public void testAddTwice(){
+		final PhysicsEngine engine = new PhysicsEngine();
+		final FieldObject fieldObject = new FieldObject();
+
+		engine.add(fieldObject);
+		engine.add(fieldObject);
+	}
+
+	/**
+	 * Scenario: delete object.
+	 */
+	@Test
 	public void testDelete(){
 		final PhysicsEngine engine = new PhysicsEngine();
 		final FieldObject fieldObject = new FieldObject();
 		final IIdentifier identifier = engine.add(fieldObject);
 
 		engine.remove(identifier);
-
-		engine.get(identifier);
 	}
 
 	/**
@@ -52,7 +62,7 @@ public class PhysicsEngineTest {
 		final PhysicsEngine engine = new PhysicsEngine();
 		final FieldObject fieldObject = new FieldObject();
 		final IIdentifier identifier = engine.add(fieldObject);
-		final FieldPosition expectedPosition = new FieldPosition();
+		final IPosition expectedPosition = FieldPosition.position(4L, 2L);
 
 		engine.set(identifier, expectedPosition);
 		final IPosition actualPosition = engine.get(identifier);
@@ -69,7 +79,7 @@ public class PhysicsEngineTest {
 		final FieldObject fieldObject = new FieldObject();
 		final IIdentifier identifier = engine.add(fieldObject);
 		final IPosition initialPosition = engine.get(identifier);
-		final Direction direction = new Direction();
+		final IDirection direction = FieldPosition.left();
 
 		engine.move(identifier, direction);
 		final IPosition resultPosition = engine.get(identifier);
@@ -91,10 +101,23 @@ public class PhysicsEngineTest {
 	 * Scenario: call 'get' with null argument should produce exception.
 	 */
 	@Test(expected = RuntimeException.class)
-	public void getNegative(){
+	public void getNegativeNull(){
 		final PhysicsEngine engine = new PhysicsEngine();
 
 		engine.get(null);
+	}
+
+	/**
+	 * Scenario: call 'get' with obsolete argument should produce exception.
+	 */
+	@Test(expected = RuntimeException.class)
+	public void getNegativeObsolete(){
+		final PhysicsEngine engine = new PhysicsEngine();
+		final FieldObject object = new FieldObject();
+		final IIdentifier identifier = engine.add(object);
+
+		engine.remove(identifier);
+		engine.get(identifier);
 	}
 
 	/**
@@ -113,7 +136,7 @@ public class PhysicsEngineTest {
 	@Test(expected = RuntimeException.class)
 	public void moveNegative1(){
 		final PhysicsEngine engine = new PhysicsEngine();
-		final Direction direction = new Direction();
+		final IDirection direction = FieldPosition.left();
 
 		engine.move(null, direction);
 	}

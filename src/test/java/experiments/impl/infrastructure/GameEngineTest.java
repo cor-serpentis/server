@@ -22,7 +22,7 @@ public class GameEngineTest {
 	public void testDoTickActionAndDelete() {
 		final AtomicLong result = new AtomicLong(0L);
 		final GameEngine engine = new GameEngine();
-		final ITickAction action = new ITickAction() {
+		final ITickAction action = new NoOpAction() {
 			@Override
 			public void doAction() {
 				result.incrementAndGet();
@@ -84,11 +84,7 @@ public class GameEngineTest {
 	@Test(expected = RuntimeException.class)
 	public void removeTickActionNegativeObsolete() {
 		final GameEngine engine = new GameEngine();
-		final IIdentifier identifier = engine.addTickAction(new ITickAction() {
-			@Override
-			public void doAction() {
-			}
-		});
+		final IIdentifier identifier = engine.addTickAction(new NoOpAction());
 
 		engine.removeTickAction(identifier);
 		engine.removeTickAction(identifier);

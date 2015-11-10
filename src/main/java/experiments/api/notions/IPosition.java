@@ -5,4 +5,9 @@ package experiments.api.notions;
  *         Created: 08.11.15 0:03
  */
 public interface IPosition {
+	void move(IDirection direction);
+
+	void set(IPosition position);
+
+	Axes get();
 }

@@ -5,4 +5,5 @@ package experiments.api.notions;
  *         Created: 07.11.15 15:35
  */
 public interface IDirection {
+	void apply(IPosition position);
 }
